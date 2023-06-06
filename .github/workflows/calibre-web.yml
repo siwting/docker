@@ -38,13 +38,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Login to GHCR
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -53,16 +46,14 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: |
-            johngong/calibre-web:latest
-            johngong/calibre-web:${{ env.CALIBRE_WEB_VER }}-${{ env.CALIBRE_VER }}
-            ghcr.io/gshang2017/calibre-web:latest
-            ghcr.io/gshang2017/calibre-web:${{ env.CALIBRE_WEB_VER }}-${{ env.CALIBRE_VER }}
+            ${{ secrets.DOCKER_USERNAME }}/calibre-web:latest
+            ${{ secrets.DOCKER_USERNAME }}/calibre-web:${{ env.CALIBRE_WEB_VER }}-${{ env.CALIBRE_VER }}
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: johngong/calibre-web
+          repository: ${{ secrets.DOCKER_USERNAME }}/calibre-web
           short-description: calibre-web:${{ env.CALIBRE_WEB_VER }}电子书管理带ebook-convert转换。
           readme-filepath: ./calibre-web/README.md
